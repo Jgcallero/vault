@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/vault/command/server"
 	"github.com/hashicorp/vault/version"
 
+	credKerberos "github.com/Jgcallero/vault/builtin/credential/kerberos"
 	credAppId "github.com/hashicorp/vault/builtin/credential/app-id"
 	credAppRole "github.com/hashicorp/vault/builtin/credential/approle"
 	credAwsEc2 "github.com/hashicorp/vault/builtin/credential/aws-ec2"
@@ -73,6 +74,7 @@ func Commands(metaPtr *meta.Meta) map[string]cli.CommandFactory {
 					"github":   credGitHub.Factory,
 					"userpass": credUserpass.Factory,
 					"ldap":     credLdap.Factory,
+					"kerberos": credKerberos.Factory,
 				},
 				LogicalBackends: map[string]logical.Factory{
 					"aws":        aws.Factory,
@@ -112,6 +114,7 @@ func Commands(metaPtr *meta.Meta) map[string]cli.CommandFactory {
 					"github":   &credGitHub.CLIHandler{},
 					"userpass": &credUserpass.CLIHandler{},
 					"ldap":     &credLdap.CLIHandler{},
+					"kerberos": &credKerberos.CLIHandler{},
 					"cert":     &credCert.CLIHandler{},
 				},
 			}, nil
