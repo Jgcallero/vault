@@ -87,6 +87,9 @@ type Policy struct {
 
 	// Whether the key is allowed to be deleted
 	DeletionAllowed bool `json:"deletion_allowed"`
+
+	// The version of the convergent nonce to use
+	ConvergentVersion int `json:"convergent_version"`
 }
 
 // ArchivedKeys stores old keys. This is used to keep the key loading time sane
@@ -260,6 +263,11 @@ func (p *Policy) needsUpgrade() bool {
 		return true
 	}
 
+	// Need to write the version
+	if p.ConvergentEncryption && p.ConvergentVersion == 0 {
+		return true
+	}
+
 	return false
 }
 
@@ -286,6 +294,11 @@ func (p *Policy) upgrade(storage logical.Storage) error {
 
 	// On first load after an upgrade, copy keys to the archive
 	if p.ArchiveVersion == 0 {
+		persistNeeded = true
+	}
+
+	if p.ConvergentEncryption && p.ConvergentVersion == 0 {
+		p.ConvergentVersion = 1
 		persistNeeded = true
 	}
 
@@ -365,8 +378,16 @@ func (p *Policy) Encrypt(context, nonce []byte, value string) (string, error) {
 	}
 
 	if p.ConvergentEncryption {
-		if len(nonce) != gcm.NonceSize() {
-			return "", errutil.UserError{Err: fmt.Sprintf("base64-decoded nonce must be %d bytes long when using convergent encryption with this key", gcm.NonceSize())}
+		if p.ConvergentVersion == 1 {
+			if len(nonce) != gcm.NonceSize() {
+				return "", errutil.UserError{Err: fmt.Sprintf("base64-decoded nonce must be %d bytes long when using convergent encryption with this key", gcm.NonceSize())}
+			}
+		} else {
+			nonceKey, err := p.DeriveKey(append(key, plaintext...), p.LatestVersion)
+			if err != nil {
+				return "", err
+			}
+			nonce = nonceKey[:gcm.NonceSize()]
 		}
 	} else {
 		// Compute random nonce
@@ -381,7 +402,7 @@ func (p *Policy) Encrypt(context, nonce []byte, value string) (string, error) {
 
 	// Place the encrypted data after the nonce
 	full := out
-	if !p.ConvergentEncryption {
+	if !p.ConvergentEncryption || p.ConvergentVersion > 1 {
 		full = append(nonce, out...)
 	}
 
@@ -400,7 +421,7 @@ func (p *Policy) Decrypt(context, nonce []byte, value string) (string, error) {
 		return "", errutil.UserError{Err: "invalid ciphertext: no prefix"}
 	}
 
-	if p.ConvergentEncryption && (nonce == nil || len(nonce) == 0) {
+	if p.ConvergentEncryption && p.ConvergentVersion == 1 && (nonce == nil || len(nonce) == 0) {
 		return "", errutil.UserError{Err: "invalid convergent nonce supplied"}
 	}
 
@@ -461,7 +482,7 @@ func (p *Policy) Decrypt(context, nonce []byte, value string) (string, error) {
 
 	// Extract the nonce and ciphertext
 	var ciphertext []byte
-	if p.ConvergentEncryption {
+	if p.ConvergentEncryption && p.ConvergentVersion < 2 {
 		ciphertext = decoded
 	} else {
 		nonce = decoded[:gcm.NonceSize()]

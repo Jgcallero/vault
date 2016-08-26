@@ -548,6 +548,11 @@ func TestKeyUpgrade(t *testing.T) {
 }
 
 func TestConvergentEncryption(t *testing.T) {
+	testConvergentEncryptionCommon(t, 0)
+	testConvergentEncryptionCommon(t, 2)
+}
+
+func testConvergentEncryptionCommon(t *testing.T, ver int) {
 	var b *backend
 	sysView := logical.TestSystemView()
 	storage := &logical.InmemStorage{}
@@ -578,43 +583,45 @@ func TestConvergentEncryption(t *testing.T) {
 		t.Fatalf("bad: expected error response, got %#v", *resp)
 	}
 
-	req.Path = "keys/testkey"
-	req.Data = map[string]interface{}{
-		"derived":               true,
-		"convergent_encryption": true,
+	p := &Policy{
+		Name:                 "testkey",
+		CipherMode:           "aes-gcm",
+		Derived:              true,
+		KDFMode:              kdfMode,
+		ConvergentEncryption: true,
+		ConvergentVersion:    ver,
 	}
 
-	resp, err = b.HandleRequest(req)
+	err = p.rotate(storage)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp != nil {
-		t.Fatalf("bad: got resp %#v", *resp)
-	}
 
-	// First, test using an invalid length of nonce
+	// First, test using an invalid length of nonce -- this is only used for v1 convergent
 	req.Path = "encrypt/testkey"
-	req.Data = map[string]interface{}{
-		"plaintext": "emlwIHphcA==", // "zip zap"
-		"nonce":     "Zm9vIGJhcg==", // "foo bar"
-		"context":   "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOlxandSdd7S",
-	}
-	resp, err = b.HandleRequest(req)
-	if resp == nil {
-		t.Fatal("expected non-nil response")
-	}
-	if !resp.IsError() {
-		t.Fatalf("expected error response, got %#v", *resp)
-	}
+	if ver < 2 {
+		req.Data = map[string]interface{}{
+			"plaintext": "emlwIHphcA==", // "zip zap"
+			"nonce":     "Zm9vIGJhcg==", // "foo bar"
+			"context":   "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOlxandSdd7S",
+		}
+		resp, err = b.HandleRequest(req)
+		if resp == nil {
+			t.Fatal("expected non-nil response")
+		}
+		if !resp.IsError() {
+			t.Fatalf("expected error response, got %#v", *resp)
+		}
 
-	// Ensure we fail if we do not provide a nonce
-	req.Data = map[string]interface{}{
-		"plaintext": "emlwIHphcA==", // "zip zap"
-		"context":   "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOlxandSdd7S",
-	}
-	resp, err = b.HandleRequest(req)
-	if err == nil && (resp == nil || !resp.IsError()) {
-		t.Fatal("expected error response")
+		// Ensure we fail if we do not provide a nonce
+		req.Data = map[string]interface{}{
+			"plaintext": "emlwIHphcA==", // "zip zap"
+			"context":   "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOlxandSdd7S",
+		}
+		resp, err = b.HandleRequest(req)
+		if err == nil && (resp == nil || !resp.IsError()) {
+			t.Fatal("expected error response")
+		}
 	}
 
 	// Now test encrypting the same value twice
@@ -651,6 +658,12 @@ func TestConvergentEncryption(t *testing.T) {
 		"nonce":     "dHdvdGhyZWVmb3Vy", // "twothreefour"
 		"context":   "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOlxandSdd7S",
 	}
+	if ver < 2 {
+		req.Data["nonce"] = "dHdvdGhyZWVmb3Vy" // "twothreefour"
+	} else {
+		req.Data["context"] = "pWZ6t/im3AORd0lVYE0zBdKpX6Bl3/SvFtoVTPWbdkzjG788XmMAnOldandSdd7S"
+	}
+
 	resp, err = b.HandleRequest(req)
 	if resp == nil {
 		t.Fatal("expected non-nil response")
