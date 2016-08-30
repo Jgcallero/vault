@@ -12,9 +12,13 @@ IMPROVEMENTS:
 
  * api: Return error when an invalid (as opposed to incorrect) unseal key is
    submitted, rather than ignoring it [GH-1782]
+ * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
  * core: Allow the size of the read cache to be set via the config file, and
    change the default value to 1MB (from 32KB) [GH-1784]
- * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
+ * core: Allow single and two-character path parameters for most places
+   [GH-1811]
+ * secret/transit: Use HKDF (RFC 5869) as the key derivation function for new
+   keys [GH-1812]
 
 BUG FIXES:
 
