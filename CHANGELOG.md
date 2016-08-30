@@ -14,10 +14,13 @@ IMPROVEMENTS:
    submitted, rather than ignoring it [GH-1782]
  * core: Allow the size of the read cache to be set via the config file, and
    change the default value to 1MB (from 32KB) [GH-1784]
+ * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
 
 BUG FIXES:
 
  * core: Pass back content-type header for forwarded requests [GH-1791]
+ * secret/aws: Added update operation to `aws/sts` path to consider `ttl`
+   parameter [39b75c6]
  * secret/aws: Mark STS secrets as non-renewable [GH-1804]
  * secret/cassandra: Properly store session for re-use [GH-1802]
  * secret/ssh: Fix panic when revoking SSH dynamic keys [GH-1781]
