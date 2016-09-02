@@ -18,12 +18,14 @@ IMPROVEMENTS:
    change the default value to 1MB (from 32KB) [GH-1784]
  * core: Allow single and two-character path parameters for most places
    [GH-1811]
+ * core: Allow list operations to be response-wrapped [GH-1814]
  * secret/transit: Use HKDF (RFC 5869) as the key derivation function for new
    keys [GH-1812]
 
 BUG FIXES:
 
  * core: Pass back content-type header for forwarded requests [GH-1791]
+ * core: Fix panic if the same key was given twice to `generate-root` [GH-1827]
  * physical: Remove empty directories from the `file` storage backend [GH-1821]
  * secret/aws: Added update operation to `aws/sts` path to consider `ttl`
    parameter [39b75c6]
