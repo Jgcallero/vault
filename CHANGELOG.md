@@ -2,30 +2,34 @@
 
 DEPRECATIONS/BREAKING CHANGES:
 
- * Tokens can no longer be used in URL paths in the token store (`/auth/token`)
-   and must be passed in via the request body. In the case of the
-   `auth/token/lookup` endpoint, this means that `GET` is no longer a supported
-   operation. In addition, in the Go API, the `TokenAuth.LookupSelf` call no
-   longer takes a parameter [GH-1783]
-
 IMPROVEMENTS:
 
  * api: Return error when an invalid (as opposed to incorrect) unseal key is
    submitted, rather than ignoring it [GH-1782]
  * api: Add method to call `auth/token/create-orphan` endpoint [GH-1834]
+ * api: Rekey operation now redirects from standbys to master [GH-1862]
  * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
  * core: Allow the size of the read cache to be set via the config file, and
    change the default value to 1MB (from 32KB) [GH-1784]
  * core: Allow single and two-character path parameters for most places
    [GH-1811]
  * core: Allow list operations to be response-wrapped [GH-1814]
+ * core: Provide better protection against timing attacks in Shamir code
+   [GH-1877]
+ * core: Allow initial root token to be PGP-encrypted [GH-1883]
+ * credential/approle: At least one constraint is required to be enabled while
+   creating and updating a role [GH-1882]
  * secret/transit: Use HKDF (RFC 5869) as the key derivation function for new
    keys [GH-1812]
+ * secret/transit: Empty plaintext values are now allowed [GH-1874]
 
 BUG FIXES:
 
+ * auth/aws-ec2: Allow authentication if the underlying host is in a bad state
+   but the instance is running [GH-1884]
  * core: Pass back content-type header for forwarded requests [GH-1791]
  * core: Fix panic if the same key was given twice to `generate-root` [GH-1827]
+ * core: Fix potential deadlock on unmount/remount [GH-1793]
  * physical: Remove empty directories from the `file` storage backend [GH-1821]
  * secret/aws: Added update operation to `aws/sts` path to consider `ttl`
    parameter [39b75c6]
