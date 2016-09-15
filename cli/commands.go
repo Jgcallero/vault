@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/vault/command/server"
 	"github.com/hashicorp/vault/version"
 
-	credKerberos "github.com/Jgcallero/vault/builtin/credential/kerberos"
 	credAppId "github.com/hashicorp/vault/builtin/credential/app-id"
 	credAppRole "github.com/hashicorp/vault/builtin/credential/approle"
 	credAwsEc2 "github.com/hashicorp/vault/builtin/credential/aws-ec2"
@@ -16,6 +15,7 @@ import (
 	credGitHub "github.com/hashicorp/vault/builtin/credential/github"
 	credLdap "github.com/hashicorp/vault/builtin/credential/ldap"
 	credUserpass "github.com/hashicorp/vault/builtin/credential/userpass"
+	credKerberos "github.com/jgcallero/vault/builtin/credential/kerberos"
 
 	"github.com/hashicorp/vault/builtin/logical/aws"
 	"github.com/hashicorp/vault/builtin/logical/cassandra"

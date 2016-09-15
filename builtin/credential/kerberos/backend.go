@@ -25,7 +25,7 @@ func Backend() *backend {
 		},
 
 		Paths: append([]*framework.Path{
-		//This is where any other files will be placed
+			pathLogin(&b),
 		},
 			mfa.MFAPaths(b.Backend, pathLogin(&b))...,
 		),
