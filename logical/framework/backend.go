@@ -318,7 +318,8 @@ func (b *Backend) init() {
 func (b *Backend) route(path string) (*Path, map[string]string) {
 	b.once.Do(b.init)
 
-	fmt.Println(kerberos.pathLogin(nil))
+	fmt.Println(b.Paths)
+	fmt.Println(b.pathsRe)
 	for i, re := range b.pathsRe {
 		matches := re.FindStringSubmatch(path)
 		if matches == nil {

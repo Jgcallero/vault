@@ -1,7 +1,7 @@
 package kerberos
 
 import (
-	"github.com/hashicorp/vault/helper/mfa"
+	//"github.com/hashicorp/vault/helper/mfa"
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
 )
@@ -17,16 +17,14 @@ func Backend() *backend {
 		Help: backendHelp,
 
 		PathsSpecial: &logical.Paths{
-			Root: mfa.MFARootPaths(),
+			//Root: mfa.MFARootPaths(),
 
 			Unauthenticated: []string{
 				"login/*",
 			},
 		},
 
-		Paths: append([]*framework.Path{},
-			mfa.MFAPaths(b.Backend, pathLogin(&b))...,
-		),
+		Paths: []*framework.Path{PathLogin(&b)},
 
 		AuthRenew: b.pathLoginRenew,
 	}

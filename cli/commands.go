@@ -13,9 +13,9 @@ import (
 	credAwsEc2 "github.com/hashicorp/vault/builtin/credential/aws-ec2"
 	credCert "github.com/hashicorp/vault/builtin/credential/cert"
 	credGitHub "github.com/hashicorp/vault/builtin/credential/github"
+	credKerberos "github.com/hashicorp/vault/builtin/credential/kerberos"
 	credLdap "github.com/hashicorp/vault/builtin/credential/ldap"
 	credUserpass "github.com/hashicorp/vault/builtin/credential/userpass"
-	credKerberos "github.com/jgcallero/vault/builtin/credential/kerberos"
 
 	"github.com/hashicorp/vault/builtin/logical/aws"
 	"github.com/hashicorp/vault/builtin/logical/cassandra"

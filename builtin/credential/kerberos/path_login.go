@@ -2,16 +2,16 @@ package kerberos
 
 import (
 	"fmt"
-	"strings"
+	//"strings"
 
-	"github.com/hashicorp/vault/helper/policyutil"
+	//"github.com/hashicorp/vault/helper/policyutil"
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
 )
 
-func pathLogin(b *backend) *framework.Path {
+func PathLogin(b *backend) *framework.Path {
 	return &framework.Path{
-		Pattern: "login/", //TODO: Need to figure out Pattern
+		Pattern: "login/*", //TODO: Need to figure out Pattern
 		Fields: map[string]*framework.FieldSchema{
 			"ticket": &framework.FieldSchema{
 				Type:        framework.TypeString, //TODO: Figure out if this is right
