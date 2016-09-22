@@ -25,6 +25,12 @@
 			"revisionTime": "2016-09-08T17:03:40Z"
 		},
 		{
+			"checksumSHA1": "eWlbQbXextN77vRiVuIBV6kSwuE=",
+			"path": "github.com/Jeffail/gabs",
+			"revision": "855034b6b7a3b7144977efcaefe72d2c64b0d039",
+			"revisionTime": "2016-08-09T16:55:30Z"
+		},
+		{
 			"checksumSHA1": "LLVyR2dAgkihu0+HdZF+JK0gMMs=",
 			"path": "github.com/agl/ed25519",
 			"revision": "278e1ec8e8a6e017cd07577924d6766039146ced",
@@ -605,6 +611,12 @@
 			"path": "github.com/hashicorp/yamux",
 			"revision": "d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd",
 			"revisionTime": "2016-07-20T23:31:40Z"
+		},
+		{
+			"checksumSHA1": "cIinEjB62s8j5cpY1u7sxtg4akg=",
+			"path": "github.com/jefferai/jsonx",
+			"revision": "9cc31c3135eef39b8e72585f37efa92b6ca314d0",
+			"revisionTime": "2016-07-21T23:51:17Z"
 		},
 		{
 			"checksumSHA1": "0ZrwvB6KoGPj2PoDNSEJwxQ6Mog=",

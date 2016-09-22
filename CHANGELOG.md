@@ -2,6 +2,19 @@
 
 DEPRECATIONS/CHANGES:
 
+ * Convergent Encryption v2: New keys in `transit` using convergent mode will
+   use a new nonce derivation mechanism rather than require the user to supply
+   a nonce. While not explicitly increasing security, it minimizes the
+   likelihood that a user will use the mode improperly and impact the security
+   of their keys. Keys in convergent mode that were created in v0.6.1 will
+   continue to work with the same mechanism (user-supplied nonce).
+ * `etcd` HA off by default: Following in the footsteps of `dynamodb`, the
+   `etcd` storage backend now requires that `ha_enabled` be explicitly
+   specified in the configuration file. The backend currently has known broken
+   HA behavior, so this flag discourages use by default without explicitly
+   enabling it. If you are using this functionality, when upgrading, you should
+   set `ha_enabled` to `"true"` *before* starting the new versions of Vault.
+
 IMPROVEMENTS:
 
  * api: Return error when an invalid (as opposed to incorrect) unseal key is
@@ -11,6 +24,8 @@ IMPROVEMENTS:
  * auth/aws-ec2: Backend generates the nonce by default and clients can
    explicitly disable reauthentication by setting empty nonce [GH-1889]
  * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
+ * command/format: The `format` flag on select CLI commands takes `yml` as an
+   alias for `yaml` [GH-1899]
  * core: Allow the size of the read cache to be set via the config file, and
    change the default value to 1MB (from 32KB) [GH-1784]
  * core: Allow single and two-character path parameters for most places
@@ -19,6 +34,9 @@ IMPROVEMENTS:
  * core: Provide better protection against timing attacks in Shamir code
    [GH-1877]
  * core: Allow initial root token to be PGP-encrypted [GH-1883]
+ * core: Unmounting/disabling backends no longer returns an error if the mount
+   didn't exist. This is line with elsewhere in Vault's API where `DELETE` is
+   an idempotent operation. [GH-1903]
  * credential/approle: At least one constraint is required to be enabled while
    creating and updating a role [GH-1882]
  * secret/transit: Use HKDF (RFC 5869) as the key derivation function for new
@@ -29,6 +47,7 @@ BUG FIXES:
 
  * auth/aws-ec2: Allow authentication if the underlying host is in a bad state
    but the instance is running [GH-1884]
+ * cli: Don't error on newline in token file [GH-1774]
  * core: Pass back content-type header for forwarded requests [GH-1791]
  * core: Fix panic if the same key was given twice to `generate-root` [GH-1827]
  * core: Fix potential deadlock on unmount/remount [GH-1793]
