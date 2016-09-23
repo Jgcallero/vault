@@ -29,7 +29,7 @@ func Backend() *backend {
 			pathUserPolicies(&b),
 			pathUserPassword(&b),
 		},
-			mfa.MFAPaths(b.Backend, PathLogin(&b))...,
+			mfa.MFAPaths(b.Backend, pathLogin(&b))...,
 		),
 
 		AuthRenew: b.pathLoginRenew,

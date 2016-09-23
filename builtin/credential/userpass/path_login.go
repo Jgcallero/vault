@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func PathLogin(b *backend) *framework.Path {
+func pathLogin(b *backend) *framework.Path {
 	return &framework.Path{
 		Pattern: "login/" + framework.GenericNameRegex("username"),
 		Fields: map[string]*framework.FieldSchema{

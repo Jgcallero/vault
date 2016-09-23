@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/vault/logical/framework"
 )
 
-func PathLogin(b *backend) *framework.Path {
+func pathLogin(b *backend) *framework.Path {
 	return &framework.Path{
 		Pattern: "login/*", //TODO: Need to figure out Pattern
 		Fields: map[string]*framework.FieldSchema{
