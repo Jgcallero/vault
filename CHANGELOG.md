@@ -15,6 +15,14 @@ DEPRECATIONS/CHANGES:
    enabling it. If you are using this functionality, when upgrading, you should
    set `ha_enabled` to `"true"` *before* starting the new versions of Vault.
 
+FEATURES:
+
+ * **Secret ID CIDR Restrictions in `AppRole`**: Secret IDs generated under an
+   approle can now specify a list of CIDR blocks from where the requests to
+   generate secret IDs should originate from. If an approle already has CIDR
+   restrictions specified, the CIDR restrictions on the secret ID should be a
+   subset of those specified on the role [GH-1910]
+
 IMPROVEMENTS:
 
  * api: Return error when an invalid (as opposed to incorrect) unseal key is
@@ -45,6 +53,9 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
+ * audit: Fix panic being caused by some values logging as underlying Go types
+   instead of formatted strings [GH-1912]
+ * auth/approle: Fixed panic on deleting approle that doesn't exist [GH-1920]
  * auth/aws-ec2: Allow authentication if the underlying host is in a bad state
    but the instance is running [GH-1884]
  * cli: Don't error on newline in token file [GH-1774]
