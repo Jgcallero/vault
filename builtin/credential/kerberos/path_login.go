@@ -11,7 +11,7 @@ import (
 
 func pathLogin(b *backend) *framework.Path {
 	return &framework.Path{
-		Pattern: "login/*", //TODO: Need to figure out Pattern
+		Pattern: "login/user", //TODO: Need to figure out Pattern
 		Fields: map[string]*framework.FieldSchema{
 			"ticket": &framework.FieldSchema{
 				Type:        framework.TypeString, //TODO: Figure out if this is right
