@@ -22,6 +22,13 @@ FEATURES:
    generate secret IDs should originate from. If an approle already has CIDR
    restrictions specified, the CIDR restrictions on the secret ID should be a
    subset of those specified on the role [GH-1910]
+ * **Initial Root Token PGP Encryption**: Similar to `generate-root`, the root
+   token created at initialization time can now be PGP encrypted [GH-1883]
+ * **Support Chained Intermediate CAs in `pki`**: The `pki` backend now allows,
+   when a CA cert is being supplied as a signed root or intermediate, a trust
+   chain of arbitrary length. The chain is returned as a parameter at
+   certificate issue/sign time and is retrievable independently as well.
+   [GH-1694]
 
 IMPROVEMENTS:
 
@@ -41,12 +48,12 @@ IMPROVEMENTS:
  * core: Allow list operations to be response-wrapped [GH-1814]
  * core: Provide better protection against timing attacks in Shamir code
    [GH-1877]
- * core: Allow initial root token to be PGP-encrypted [GH-1883]
  * core: Unmounting/disabling backends no longer returns an error if the mount
    didn't exist. This is line with elsewhere in Vault's API where `DELETE` is
    an idempotent operation. [GH-1903]
  * credential/approle: At least one constraint is required to be enabled while
    creating and updating a role [GH-1882]
+ * secret/cassandra: Added consistency level for use with roles [GH-1931]
  * secret/transit: Use HKDF (RFC 5869) as the key derivation function for new
    keys [GH-1812]
  * secret/transit: Empty plaintext values are now allowed [GH-1874]
@@ -58,6 +65,8 @@ BUG FIXES:
  * auth/approle: Fixed panic on deleting approle that doesn't exist [GH-1920]
  * auth/aws-ec2: Allow authentication if the underlying host is in a bad state
    but the instance is running [GH-1884]
+ * auth/token: Fixed metadata getting missed out from token lookup response by
+   gracefully handling token entry upgrade [GH-1924]
  * cli: Don't error on newline in token file [GH-1774]
  * core: Pass back content-type header for forwarded requests [GH-1791]
  * core: Fix panic if the same key was given twice to `generate-root` [GH-1827]
