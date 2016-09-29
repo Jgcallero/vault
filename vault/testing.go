@@ -369,7 +369,7 @@ func (n *rawHTTP) SpecialPaths() *logical.Paths {
 func (n *rawHTTP) System() logical.SystemView {
 	return logical.StaticSystemView{
 		DefaultLeaseTTLVal: time.Hour * 24,
-		MaxLeaseTTLVal:     time.Hour * 24 * 30,
+		MaxLeaseTTLVal:     time.Hour * 24 * 32,
 	}
 }
 
@@ -590,8 +590,6 @@ func TestCluster(t *testing.T, handlers []http.Handler, base *CoreConfig, unseal
 		ClusterAddr:        fmt.Sprintf("https://127.0.0.1:%d", c1lns[0].Address.Port+1),
 		DisableMlock:       true,
 	}
-
-	coreConfig.LogicalBackends["generic"] = PassthroughBackendFactory
 
 	if base != nil {
 		// Used to set something non-working to test fallback

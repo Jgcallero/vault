@@ -14,6 +14,10 @@ DEPRECATIONS/CHANGES:
    HA behavior, so this flag discourages use by default without explicitly
    enabling it. If you are using this functionality, when upgrading, you should
    set `ha_enabled` to `"true"` *before* starting the new versions of Vault.
+ * Default/Max lease/token TTLs are now 32 days: In previous versions of Vault
+   the default was 30 days, but moving it to 32 days allows some operations
+   (e.g. reauthenticating, renewing, etc.) to be performed via a monthly cron
+   job.
 
 FEATURES:
 
@@ -29,6 +33,9 @@ FEATURES:
    chain of arbitrary length. The chain is returned as a parameter at
    certificate issue/sign time and is retrievable independently as well.
    [GH-1694]
+ * **Response Wrapping Enhancements**: There are new endpoints to look up
+   response wrapped token parameters; wrap arbitrary values; rotate wrapping
+   tokens; and unwrap with enhanced validation. [GH-1927]
 
 IMPROVEMENTS:
 
@@ -36,6 +43,11 @@ IMPROVEMENTS:
    submitted, rather than ignoring it [GH-1782]
  * api: Add method to call `auth/token/create-orphan` endpoint [GH-1834]
  * api: Rekey operation now redirects from standbys to master [GH-1862]
+ * auth/aws-ec2: IAM bound parameters on the aws-ec2 backend will perform a
+   prefix match instead of exact match [GH-1943]
+ * auth/aws-ec2: Added a new constraint `bound_iam_instance_profile_arn` to
+   refer to IAM instance profile ARN and fixed the earlier `bound_iam_role_arn`
+   to refer to IAM role ARN instead of the instance profile ARN [GH-1913]
  * auth/aws-ec2: Backend generates the nonce by default and clients can
    explicitly disable reauthentication by setting empty nonce [GH-1889]
  * auth/token: Added warnings if tokens and accessors are used in URLs [GH-1806]
