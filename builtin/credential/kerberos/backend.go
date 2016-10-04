@@ -24,7 +24,9 @@ func Backend() *backend {
 			},
 		},
 
-		Paths: append([]*framework.Path{},
+		Paths: append([]*framework.Path{
+			pathKeytab(&b),
+		},
 			mfa.MFAPaths(b.Backend, pathLogin(&b))...,
 		),
 
