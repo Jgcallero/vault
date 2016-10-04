@@ -17,9 +17,6 @@ import (
 	"github.com/hashicorp/hcl/hcl/ast"
 )
 
-// ReloadFunc are functions that are called when a reload is requested.
-type ReloadFunc func(map[string]string) error
-
 // Config is the configuration for the vault server.
 type Config struct {
 	Listeners []*Listener `hcl:"-"`
@@ -446,8 +443,7 @@ func parseBackends(result *Config, list *ast.ObjectList) error {
 		delete(m, "cluster_addr")
 	}
 
-	//TODO: Change this in the future
-	disableClustering := true
+	var disableClustering bool
 	var err error
 	if v, ok := m["disable_clustering"]; ok {
 		disableClustering, err = strconv.ParseBool(v)
@@ -502,8 +498,7 @@ func parseHABackends(result *Config, list *ast.ObjectList) error {
 		delete(m, "cluster_addr")
 	}
 
-	//TODO: Change this in the future
-	disableClustering := true
+	var disableClustering bool
 	var err error
 	if v, ok := m["disable_clustering"]; ok {
 		disableClustering, err = strconv.ParseBool(v)

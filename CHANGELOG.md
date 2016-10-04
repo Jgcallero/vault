@@ -18,6 +18,18 @@ DEPRECATIONS/CHANGES:
    the default was 30 days, but moving it to 32 days allows some operations
    (e.g. reauthenticating, renewing, etc.) to be performed via a monthly cron
    job.
+ * AppRole Secret ID endpoints changed: Secret ID and Secret ID accessors were
+   getting logged in plaintext in the audit logs as they were part of request
+   URLs.  The GET and DELETE operations are now moved to new endpoints (`/lookup`
+   and `/destroy`) which consumes the input from the body and not the URL.
+ * Reading wrapped responses from `cubbyhole/response` is deprecated. The
+   `sys/wrapping/unwrap` endpoint should be used instead as it provides
+   additional security, auditing, and other benefits. The ability to read
+   directly will be removed in a future release.
+ * Request Forwarding is now on by default: in 0.6.1 this required toggling on,
+   but is now enabled by default. This can be disabled via the
+   `"disable_clustering"` parameter in Vault's config, or per-request with the
+   `X-Vault-No-Request-Forwarding` header.
 
 FEATURES:
 
@@ -36,6 +48,9 @@ FEATURES:
  * **Response Wrapping Enhancements**: There are new endpoints to look up
    response wrapped token parameters; wrap arbitrary values; rotate wrapping
    tokens; and unwrap with enhanced validation. [GH-1927]
+ * Transit features: The `transit` backend now supports generating random bytes
+   and SHA sums; HMACs; and signing and verification functionality using EC
+   keys (P-256)
 
 IMPROVEMENTS:
 
@@ -43,6 +58,8 @@ IMPROVEMENTS:
    submitted, rather than ignoring it [GH-1782]
  * api: Add method to call `auth/token/create-orphan` endpoint [GH-1834]
  * api: Rekey operation now redirects from standbys to master [GH-1862]
+ * audit/file: Sending a `SIGHUP` to Vault now causes Vault to close and
+   re-open the log file, making it easier to rotate audit logs [GH-1953]
  * auth/aws-ec2: IAM bound parameters on the aws-ec2 backend will perform a
    prefix match instead of exact match [GH-1943]
  * auth/aws-ec2: Added a new constraint `bound_iam_instance_profile_arn` to
@@ -75,6 +92,8 @@ BUG FIXES:
  * audit: Fix panic being caused by some values logging as underlying Go types
    instead of formatted strings [GH-1912]
  * auth/approle: Fixed panic on deleting approle that doesn't exist [GH-1920]
+ * auth/approle: Not letting secret IDs and secret ID accessors to get logged
+   in plaintext in audit logs [GH-1947]
  * auth/aws-ec2: Allow authentication if the underlying host is in a bad state
    but the instance is running [GH-1884]
  * auth/token: Fixed metadata getting missed out from token lookup response by
