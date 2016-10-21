@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/vault/logical/framework"
 )
 
-func pathKeytab(b *backend) *framework.Path {
+func pathKeytabWrite(b *backend) *framework.Path {
 	return &framework.Path{
-		Pattern: "keytab", //TODO: Check to see if this needs changing
+		Pattern: "keytab/write", //TODO: Check to see if this needs changing
 		Fields: map[string]*framework.FieldSchema{
 			"principal": &framework.FieldSchema{
 				Type:        framework.TypeString, //This seems wrong
@@ -26,8 +26,31 @@ func pathKeytab(b *backend) *framework.Path {
 
 		Callbacks: map[logical.Operation]framework.OperationFunc{
 			logical.DeleteOperation: b.pathKeytabDelete,
-			logical.ReadOperation:   b.pathKeytabRead,
 			logical.UpdateOperation: b.pathKeytabWrite,
+		},
+
+		HelpSynopsis:    pathKeytabHelpSyn,
+		HelpDescription: pathKeytabHelpDesc,
+	}
+}
+
+func pathKeytabRead(b *backend) *framework.Path {
+	return &framework.Path{
+		Pattern: "keytab/read",
+		Fields: map[string]*framework.FieldSchema{
+			"principal": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Description: "Principal for the user",
+			},
+
+			"realm": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Description: "realm for the user",
+			},
+		},
+
+		Callbacks: map[logical.Operation]framework.OperationFunc{
+			logical.UpdateOperation: b.pathKeytabRead,
 		},
 
 		HelpSynopsis:    pathKeytabHelpSyn,
@@ -43,8 +66,23 @@ func (b *backend) pathKeytabDelete(req *logical.Request, d *framework.FieldData)
 
 func (b *backend) pathKeytabRead(req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	fmt.Println("Keytab Read")
-	return logical.ErrorResponse("Not Supported Yet"), nil
+	Princ := strings.ToLower(d.Get("principal").(string))
+	Realm := strings.ToUpper(d.Get("realm").(string))
+	fmt.Println("keytab/" + Princ + Realm)
+	entry, err := req.Storage.Get("keytab/" + Princ + Realm)
+	if err != nil {
+		return nil, err
+	}
+	if entry == nil {
+		return logical.ErrorResponse("prinicipal/realm doesn't exist"), nil
+	}
+	Ticket := &TicketEntry{}
+	if err := entry.DecodeJSON(&Ticket); err != nil {
+		return nil, err
+	}
 
+	fmt.Println(Ticket.Principal, ' ', Ticket.Realm)
+	return logical.ErrorResponse("We Did It"), nil
 }
 
 func (b *backend) pathKeytabWrite(req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
@@ -54,7 +92,7 @@ func (b *backend) pathKeytabWrite(req *logical.Request, d *framework.FieldData) 
 	Ticket.Principal = Principal
 	Realm := strings.ToUpper(d.Get("realm").(string))
 	Ticket.Realm = Realm
-
+	fmt.Println("keytab/" + Principal + Realm)
 	entry, err := logical.StorageEntryJSON("keytab/"+Principal+Realm, Ticket)
 	if err != nil {
 		return nil, err
