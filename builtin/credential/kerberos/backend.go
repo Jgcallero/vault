@@ -1,5 +1,6 @@
 package kerberos
 
+//  The Kerberos Backend
 import (
 	"github.com/hashicorp/vault/helper/mfa"
 	"github.com/hashicorp/vault/logical"
