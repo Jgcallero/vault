@@ -2,6 +2,10 @@
 
 IMPROVEMENTS:
 
+ * auth/github: Policies can now be assigned to users as well as to teams
+   [GH-2079]
+ * core: Response wrapping is now allowed to be specified by backend responses
+   (requires backends gaining support) [GH-2088]
  * secret/consul: Added listing functionality to roles [GH-2065]
  * secret/postgresql: Added `revocation_sql` parameter on the role endpoint to
    enable customization of user revocation SQL statements [GH-2033]
@@ -14,8 +18,11 @@ BUG FIXES:
    instance-profile ARN [GH-2035]
  * api/unwrap, command/unwrap: Fix compatibility of `unwrap` command with Vault
    0.6.1 and older [GH-2014]
+ * api/unwrap, command/unwrap: Fix error when no client token exists [GH-2077]
  * command/ssh: Use temporary file for identity and ensure its deletion before
    the command returns [GH-2016]
+ * core: Fix bug where a failure to come up as active node (e.g. if an audit
+   backend failed) could lead to deadlock [GH-2083]
 
 ## 0.6.2 (October 5, 2016)
 
